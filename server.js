@@ -1,14 +1,29 @@
 /**
  * Created by rishabhshukla on 28/10/17.
  */
-const express = require("express");
+const restify = require("restify");
+const botbuilder = require("botbuilder");
 
-const app= express();
+let server = restify.createServer();
 
-app.use (express.static("./"));
+server.listen(3456, () => {
+    console.log('listening on port 3456');
+});
 
-app.listen(8080, function(){
+let connector = new botbuilder.ChatConnector();
+let bot = new botbuilder.UniversalBot(connector);
 
-    console.log("Listening on port 8080")
+server.post("/", connector.listen());
 
+bot.dialog("/", (session) => {
+    let message = session.message.text;
+    if(message.toLowerCase().indexOf('mait') > -1){
+        if(message.toLowerCase().indexOf("fees") > -1){
+            session.send("The fees is INR 1,10,000/- only");
+        }else if(message.toLowerCase().indexOf("website") > -1){
+            session.send("https://mait.ac.in");
+        }
+    }else{
+        session.send('I dont understand what you are saying.');
+    }
 });
